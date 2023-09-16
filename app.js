@@ -9,6 +9,19 @@ const usersRouter = require('./routes/users');
 
 const app = express();
 
+// Set up mongoose connection
+const mongoose = require('mongoose');
+
+mongoose.set('strictQuery', false);
+// Define the database URL to connect to.
+const mongoDB =
+  'mongodb+srv://mkoulutas:1656MKou1399@cluster0.jn0iaqq.mongodb.net/?retryWrites=true&w=majority';
+// Wait for database to connect, logging an error if there is a problem
+main().catch((err) => console.log(err));
+async function main() {
+  await mongoose.connect(mongoDB);
+}
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
