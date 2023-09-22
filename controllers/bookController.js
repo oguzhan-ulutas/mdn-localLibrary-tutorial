@@ -135,15 +135,16 @@ exports.book_delete_get = asyncHandler(async (req, res, next) => {
   // Get details of book and all the book instances
   const [book, allTheBookInstance] = await Promise.all([
     Book.findById(req.params.id).exec(),
-    BookInstance.find({ book: req.params.id }).exec(),
+    BookInstance.find({ book: req.params.id }).populate('book').exec(),
   ]);
+
   if (book === null) {
     res.redirect('/catalog/books');
   }
   res.render('book_delete', {
     title: 'Delete Book',
     book,
-    instanceOfBook: allTheBookInstance,
+    instancesOfBook: allTheBookInstance,
   });
 });
 
@@ -160,8 +161,12 @@ exports.book_delete_post = asyncHandler(async (req, res, next) => {
     res.render('book_delete', {
       title: 'Delete Book',
       book,
-      instanceOfBook: allTheBookInstance,
+      instancesOfBook: allTheBookInstance,
     });
+  } else {
+    // Book has no instance. Delete and redirect to book list.
+    await Book.findByIdAndDelete(req.body.bookId);
+    res.redirect('/catalog/books');
   }
 });
 
